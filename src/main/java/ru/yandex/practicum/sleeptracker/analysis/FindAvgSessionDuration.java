@@ -23,7 +23,7 @@ public class FindAvgSessionDuration implements Function<List<SleepingSession>, S
                 .average()
                 .orElse(0);
 
-        return new SleepAnalysisResult (
+        return new SleepAnalysisResult(
                 "Средняя длина сессии сна (минуты)",
                 avgDuration
         );

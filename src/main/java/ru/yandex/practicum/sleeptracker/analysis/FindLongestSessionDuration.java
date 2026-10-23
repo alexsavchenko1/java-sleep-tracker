@@ -18,7 +18,7 @@ public class FindLongestSessionDuration implements Function<List<SleepingSession
                 .map(session -> between(session.start(), session.end()).toMinutes())
                 .toList();
 
-        return new SleepAnalysisResult (
+        return new SleepAnalysisResult(
                 "Длина самой длинной сессии сна (минуты)",
                 max(listOfDurations)
         );

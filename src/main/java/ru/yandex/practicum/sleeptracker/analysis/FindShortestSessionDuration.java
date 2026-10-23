@@ -16,7 +16,7 @@ public class FindShortestSessionDuration implements Function<List<SleepingSessio
                     .map(session -> Duration.between(session.start(), session.end()).toMinutes())
                     .toList();
 
-        return new SleepAnalysisResult (
+        return new SleepAnalysisResult(
                 "Длина самой короткой сессии сна (минуты)",
                 min(listOfDurations)
         );
