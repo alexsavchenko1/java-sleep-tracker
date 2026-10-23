@@ -13,6 +13,8 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.time.format.DateTimeParseException;
+
 
 class SleepingSessionParserTest {
 
@@ -131,4 +133,88 @@ class SleepingSessionParserTest {
                 () -> SleepingSessionParser.getSleepingSessions(file)
         );
     }
+
+
+    @Test
+    void parseLine_invalidCalendarDate_throwsException() {
+        String line = "31.02.25 22:00;01.03.25 07:00;GOOD";
+
+        assertThrows(
+                DateTimeParseException.class,
+                () -> SleepingSessionParser.parseLine(line)
+        );
+    }
+
+    @Test
+    void parseLine_nonLeapYearFebruary29_throwsException() {
+        String line = "29.02.25 22:00;01.03.25 07:00;GOOD";
+
+        assertThrows(
+                DateTimeParseException.class,
+                () -> SleepingSessionParser.parseLine(line)
+        );
+    }
+
+    @Test
+    void parseLine_validLeapYear_acceptsFebruary29() {
+        String line = "29.02.24 22:00;01.03.24 07:00;GOOD";
+
+        SleepingSession result =
+                SleepingSessionParser.parseLine(line);
+
+        assertEquals(
+                LocalDateTime.of(2024, 2, 29, 22, 0),
+                result.start()
+        );
+    }
+
+    @Test
+    void parseLine_endBeforeStart_throwsException() {
+        String line = "02.10.25 08:00;01.10.25 22:00;GOOD";
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> SleepingSessionParser.parseLine(line)
+        );
+    }
+
+    @Test
+    void parseLine_equalStartAndEnd_throwsException() {
+        String line = "02.10.25 08:00;02.10.25 08:00;GOOD";
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> SleepingSessionParser.parseLine(line)
+        );
+    }
+
+    @Test
+    void parseLine_extraField_throwsException() {
+        String line =
+                "01.10.25 22:00;02.10.25 06:00;GOOD;EXTRA";
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> SleepingSessionParser.parseLine(line)
+        );
+    }
+
+    @Test
+    void parseLine_missingField_throwsException() {
+        String line = "01.10.25 22:00;02.10.25 06:00";
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> SleepingSessionParser.parseLine(line)
+        );
+    }
+
+    @Test
+    void parseLine_blankLine_throwsException() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> SleepingSessionParser.parseLine("   ")
+        );
+    }
+
 }
