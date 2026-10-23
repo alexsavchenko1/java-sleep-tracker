@@ -1,15 +1,21 @@
+
 package ru.yandex.practicum.sleeptracker;
+
+import ru.yandex.practicum.sleeptracker.analysis.CountBadSessions;
+import ru.yandex.practicum.sleeptracker.analysis.CountSessions;
+import ru.yandex.practicum.sleeptracker.analysis.CountSleeplessNights;
+import ru.yandex.practicum.sleeptracker.analysis.DetermineChronotype;
+import ru.yandex.practicum.sleeptracker.analysis.FindAvgSessionDuration;
+import ru.yandex.practicum.sleeptracker.analysis.FindLongestSessionDuration;
+import ru.yandex.practicum.sleeptracker.analysis.FindShortestSessionDuration;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
-import java.util.List;
-//import java.util.Scanner;
 import java.nio.file.Path;
-import java.util.function.Function;
-import ru.yandex.practicum.sleeptracker.analysis.*;
 import java.time.format.DateTimeParseException;
-
+import java.util.List;
+import java.util.function.Function;
 
 public class SleepTrackerApp {
 
@@ -25,9 +31,7 @@ public class SleepTrackerApp {
             new DetermineChronotype()
     );
 
-    public static void main(String[] args) throws IOException {
-        // Scanner scanner = new Scanner(System.in);
-        // String input = scanner.nextLine(); // прочитали входящий путь к строке
+    public static void main(String[] args) {
 
         // Проверим, указан ли какой-нить файл
         if (args.length == 0) {
@@ -52,8 +56,25 @@ public class SleepTrackerApp {
                 return;
             }
 
-            // Дальше оставляешь существующий код:
-            // чтение сессий, проверка списка и запуск семи функций
+            // Читаем сессии сна из файла
+            List<SleepingSession> sleepingSessions =
+                    SleepingSessionParser.getSleepingSessions(path);
+
+            // Проверим результат парсинга
+            if (sleepingSessions.isEmpty()) {
+                System.err.println("Ошибка: в файле нет сессий сна.");
+                return;
+            }
+
+            // Запустим все аналитические функции
+            listOfFunctions.forEach(analysis -> {
+                SleepAnalysisResult result =
+                        analysis.apply(sleepingSessions);
+
+                System.out.println(
+                        result.description() + ": " + result.value()
+                );
+            });
 
         } catch (IOException e) {
             System.err.println(
@@ -72,6 +93,5 @@ public class SleepTrackerApp {
                     "Ошибка формата данных в лог-файле: " + e.getMessage()
             );
         }
-
-        }
     }
+}

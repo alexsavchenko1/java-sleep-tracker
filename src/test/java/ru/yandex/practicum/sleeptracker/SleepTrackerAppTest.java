@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SleepTrackerAppTest {
 
@@ -32,19 +33,43 @@ class SleepTrackerAppTest {
                 03.10.25 23:30;04.10.25 06:20;BAD
                 """);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ByteArrayOutputStream output =
+                new ByteArrayOutputStream();
+
+        ByteArrayOutputStream errorOutput =
+                new ByteArrayOutputStream();
+
         PrintStream originalOut = System.out;
+        PrintStream originalErr = System.err;
 
-        try (PrintStream testOut = new PrintStream(
-                output, true, StandardCharsets.UTF_8)) {
-
+        try (
+                PrintStream testOut = new PrintStream(
+                        output, true, StandardCharsets.UTF_8);
+                PrintStream testErr = new PrintStream(
+                        errorOutput, true, StandardCharsets.UTF_8)
+        ) {
             System.setOut(testOut);
+            System.setErr(testErr);
 
             SleepTrackerApp.main(new String[]{file.toString()});
 
         } finally {
             System.setOut(originalOut);
+            System.setErr(originalErr);
         }
+
+        String actual =
+                output.toString(StandardCharsets.UTF_8);
+
+        String errors =
+                errorOutput.toString(StandardCharsets.UTF_8);
+
+        // Диагностика: выводим оба потока после их восстановления
+        System.out.println("STDOUT:");
+        System.out.println(actual);
+
+        System.out.println("STDERR:");
+        System.out.println(errors);
 
         String expected = String.join(System.lineSeparator(),
                 "Количество сессий сна: 4",
@@ -56,7 +81,12 @@ class SleepTrackerAppTest {
                 "Хронотип пользователя: Голубь"
         ) + System.lineSeparator();
 
-        assertEquals(expected, output.toString(StandardCharsets.UTF_8));
+        assertTrue(
+                errors.isEmpty(),
+                "Приложение вывело ошибку: " + errors
+        );
+
+        assertEquals(expected, actual);
     }
 
     // Проверяем запуск без аргументов командной строки
