@@ -5,7 +5,6 @@ import java.util.List;
 //import java.nio.file.Files;
 import java.nio.file.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.util.stream.Stream;
 
@@ -15,10 +14,12 @@ import java.util.stream.Stream;
 // 2. Читающий файл и возвращающий список SleepingSessions
 
 public class SleepingSessionParser {
+    // Нужен, потому что данные не в ISO формате у нас.
+    private static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     public static SleepingSession parseLine(String line){
-        // Нужен, потому что данные не в ISO формате у нас.
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+
 
         String[] array = line.split(";");
         return new SleepingSession(
