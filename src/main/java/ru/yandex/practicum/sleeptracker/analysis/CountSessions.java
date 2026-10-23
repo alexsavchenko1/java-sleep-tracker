@@ -4,7 +4,6 @@ import ru.yandex.practicum.sleeptracker.SleepAnalysisResult;
 import ru.yandex.practicum.sleeptracker.SleepingSession;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 
 public class CountSessions implements Function<List<SleepingSession>, SleepAnalysisResult> {

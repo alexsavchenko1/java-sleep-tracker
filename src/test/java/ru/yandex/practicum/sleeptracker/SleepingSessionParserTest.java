@@ -13,7 +13,6 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.time.format.DateTimeParseException;
 
 
 class SleepingSessionParserTest {

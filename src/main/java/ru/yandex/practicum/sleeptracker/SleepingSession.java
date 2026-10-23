@@ -15,5 +15,4 @@ public record SleepingSession(
         LocalDateTime end,
         SleepQuality quality
 ) {
-
 }
