@@ -29,7 +29,7 @@ class CountSleeplessNightsTest {
         return (Long) result.value();
     }
 
-    // 1. Обычный ночной сон
+    // Обычный ночной сон
     @Test
     void overnightSleep_noSleeplessNights() {
         List<SleepingSession> sessions = List.of(
@@ -39,7 +39,7 @@ class CountSleeplessNightsTest {
         assertEquals(0L, countSleepless(sessions));
     }
 
-    // 2. Короткий сон внутри интервала 00:00–06:00
+    // Короткий сон внутри интервала 00:00–06:00
     @Test
     void shortNightSleep_notSleepless() {
         List<SleepingSession> sessions = List.of(
@@ -49,7 +49,7 @@ class CountSleeplessNightsTest {
         assertEquals(0L, countSleepless(sessions));
     }
 
-    // 3. Между двумя ночными снами пропущена ночь
+    // Между двумя ночными снами пропущена ночь
     @Test
     void missingNight_countsOneSleeplessNight() {
         List<SleepingSession> sessions = List.of(
@@ -63,7 +63,7 @@ class CountSleeplessNightsTest {
         assertEquals(1L, countSleepless(sessions));
     }
 
-    // 4. Сон заканчивается ровно в 00:00
+    // Сон заканчивается ровно в 00:00
     @Test
     void sleepEndsAtMidnight_doesNotCoverNight() {
         List<SleepingSession> sessions = List.of(
@@ -75,7 +75,7 @@ class CountSleeplessNightsTest {
         assertEquals(1L, countSleepless(sessions));
     }
 
-    // 5. Сон начинается ровно в 06:00
+    // Сон начинается ровно в 06:00
     @Test
     void sleepStartsAtSix_doesNotCoverNight() {
         List<SleepingSession> sessions = List.of(
@@ -85,7 +85,7 @@ class CountSleeplessNightsTest {
         assertEquals(1L, countSleepless(sessions));
     }
 
-    // 6. Две сессии сна в течение одной ночи
+    // Две сессии сна в течение одной ночи
     @Test
     void multipleSessionsSameNight_notSleepless() {
         List<SleepingSession> sessions = List.of(
@@ -96,7 +96,7 @@ class CountSleeplessNightsTest {
         assertEquals(0L, countSleepless(sessions));
     }
 
-    // 7. Переход между месяцами
+    //  Переход между месяцами
     @Test
     void monthBoundary_countsMissingNight() {
         List<SleepingSession> sessions = List.of(
@@ -110,7 +110,7 @@ class CountSleeplessNightsTest {
         assertEquals(1L, countSleepless(sessions));
     }
 
-    // 8. Дневной сон в конце логирования
+    // Дневной сон в конце логирования
     @Test
     void lastSessionInAfternoon_doesNotAddFutureNight() {
         List<SleepingSession> sessions = List.of(
@@ -122,7 +122,7 @@ class CountSleeplessNightsTest {
         assertEquals(0L, countSleepless(sessions));
     }
 
-    // 9. Первая сессия — дневной сон
+    // Первая сессия — дневной сон
     @Test
     void firstSessionInAfternoon_startsFromNextNight() {
         List<SleepingSession> sessions = List.of(
@@ -135,7 +135,6 @@ class CountSleeplessNightsTest {
         assertEquals(1L, countSleepless(sessions));
     }
 
-    // 10. Сессии переданы не в хронологическом порядке
     @Test
     void unorderedSessions_countsCorrectly() {
         List<SleepingSession> sessions = List.of(
@@ -145,5 +144,35 @@ class CountSleeplessNightsTest {
 
         // Должна быть обнаружена бессонная ночь 03.10
         assertEquals(1L, countSleepless(sessions));
+    }
+
+    // Одна сессия пересекает несколько ночей
+    @Test
+    void sleepSpanningMultipleNights_countsZeroSleepless() {
+        List<SleepingSession> sessions = List.of(
+                session(
+                        "2025-10-01T23:00",
+                        "2025-10-04T07:00"
+                )
+        );
+
+        assertEquals(0L, countSleepless(sessions));
+    }
+
+    // Несколько бессонных ночей подряд
+    @Test
+    void threeConsecutiveSleeplessNights_countsThree() {
+        List<SleepingSession> sessions = List.of(
+                session(
+                        "2025-10-01T23:00",
+                        "2025-10-02T08:00"
+                ),
+                session(
+                        "2025-10-05T23:00",
+                        "2025-10-06T08:00"
+                )
+        );
+
+        assertEquals(3L, countSleepless(sessions));
     }
 }
