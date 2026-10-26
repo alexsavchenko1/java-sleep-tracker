@@ -18,6 +18,7 @@ public class CountSleeplessNights
 
         // Находим границы периода логирования
         SleepingSession first = sessions.stream()
+                .filter(sleepingSession -> sleepingSession.start() != null)
                 .min(Comparator.comparing(SleepingSession::start))
                 .orElseThrow();
 

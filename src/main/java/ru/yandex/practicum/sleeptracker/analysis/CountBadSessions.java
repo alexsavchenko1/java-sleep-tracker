@@ -13,7 +13,7 @@ public class CountBadSessions implements Function<List<SleepingSession>, SleepAn
     public SleepAnalysisResult apply(List<SleepingSession> sleepingSessionsList) {
 
         long badSessions = sleepingSessionsList.stream()
-                .filter(session -> session.quality().equals(SleepQuality.BAD))
+                .filter(session -> SleepQuality.BAD.equals(session.quality()))
                 .count();
 
         return new SleepAnalysisResult(
